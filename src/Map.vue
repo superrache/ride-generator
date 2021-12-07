@@ -2,40 +2,39 @@
     <div class="container">
       <div id="map" ref="map">
       </div>
-      <div id="panel">
-        <h1>Détails</h1>
-        <div v-html="details"></div>
-        <div v-html="instructions"></div>
-      </div>
+
+      <Panel id="panel" ref="panel"/>
     </div>
 </template>
 
 <script>
 
-import { Map, Marker, NavigationControl } from 'maplibre-gl';
-//import turf from '@turf/turf'
+import { Map, Marker, NavigationControl, GeolocateControl } from 'maplibre-gl';
 import * as turf from '@turf/turf'
 
-const DEBUG = true
+import Panel from './Panel.vue'
+
+const DEBUG = false
 
 export default {
   name: 'Map',
+  components: {
+    Panel
+  },
   data() {
     return {
       map: null,
-      expectedTime: 0.5, // heures
-      speed: 4, // km/h
-      mode: 'foot',
-      details: '',
-      instructions: '',
       initMarker: null,
       stepMarkers: [],
       lastPolylineLayerId: null,
       zoom: 14,
-      center: { lat: 47.2143, lng: -1.5587 }
+      center: { lat: 47.2143, lng: -1.5587 },
+      panel: null
     }
   },
   mounted() {
+    this.panel = this.$refs.panel
+
     this.map = new Map({
         container: this.$refs.map,
         style: "https://api.jawg.io/styles/3425c3c4-29a2-494c-a977-e9232dd8cf26.json?access-token=UG9wQV1RcEgsXwkTX9M9qfBUV0ZckAfUhlqa3W4hK16gVbTFDUSMXrn60H1hEE6d",
@@ -44,6 +43,15 @@ export default {
       })
     
     this.map.addControl(new NavigationControl(), 'top-right')
+
+    this.map.addControl(
+      new GeolocateControl({
+        positionOptions: {
+        enableHighAccuracy: true
+      },
+        trackUserLocation: true
+      })
+    )
 
     this.map.on('click', this.onClic)
   },
@@ -66,7 +74,7 @@ export default {
       }
 
       this.initMarker = new Marker({
-        color: "#FF00FF",
+        color: "#ff5000",
         draggable: true
       }).setLngLat(lngLat)
         .on('dragend', this.onDrag)
@@ -75,7 +83,7 @@ export default {
       this.generateRide(lngLat)
     },
     generateSteps(from) {
-      const expectedDistance = this.speed * this.expectedTime
+      const expectedDistance = this.panel.speed * this.panel.expectedTime
       console.log("expectedDistance=" + expectedDistance + " km")
       
       // on considère un cercle dont le périmètre = expectedDistance
@@ -130,13 +138,12 @@ export default {
 
       const km = path.distance
       const h = path.time / 3600000
-      this.instructions = path.instructions
       
       const coords = this.decodeGeometry(path.points)
       this.lastPolylineLayerId = this.addPolyline(coords)
       console.log('added layer ' + this.lastPolylineLayerId)
 
-      this.details = "Distance : " + km + " km<br/>Temps : " + h + " h"
+      this.panel.details = "Distance : " + km + " km<br/>Temps : " + h + " h"
     },
     async getRoute(points) {
       var pointsArg = ""
@@ -146,12 +153,12 @@ export default {
       })
       const routingUrl = "https://graphhopper.com/api/1/route?"
         + pointsArg
-        + "&vehicle=" + this.mode
+        + "&vehicle=" + this.panel.mode
         + "&avoid=motorway;ferry"
         //+ "&details=street_name;time;distance;max_speed;toll;road_class;road_class_link;road_access;road_environment;lanes;surface"
         + "&optimize=true" // meilleur ordre de passage
         + "&elevation=false"
-        + "&instructions=true"
+        + "&instructions=false"
         + "&turn_costs=false"
         + "&locale=fr"
         + "&calc_points=true"
@@ -233,7 +240,7 @@ export default {
         }
       }
       const paint = {
-          'line-color': '#FF00FF',
+          'line-color': '#ff5000',
           'line-opacity': 0.50,
           'line-width': 3
         }
@@ -275,19 +282,6 @@ a {
   width: 100%;
   height: 100%;
   z-index: 1;
-}
-
-#panel {
-  position: absolute;
-  background-color: #00001290;
-  left: 15px;
-  top: 15px;
-  width: 300px;
-  height: 500px;
-  color: white;
-  text-align: left;
-  padding: 10px;
-  z-index: 1005;
 }
 
 </style>

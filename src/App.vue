@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Map from './components/Map.vue'
+import Map from './Map.vue'
 
 export default {
   name: 'App',
@@ -22,6 +22,7 @@ body {
   height: 100vh;
   width: 100vw;
   background-color: #343434;
+  overflow: hidden;
 }
 
 #app {
