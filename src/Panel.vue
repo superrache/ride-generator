@@ -1,22 +1,26 @@
 <template>
     <div id="panel">
-        <h1>Générateur de balade</h1>
+        <h1>Générateur de <span style="color: lightsalmon;">balade</span></h1>
         <div class="cat">
-          <h3>Mode de déplacement</h3>
+          <h3><span style="color: lightsalmon; font-weight: 700;">D</span>urée : {{dispExpectedTime}}</h3>
+          <Slider id="slider" ref="slider" v-bind:min="0.25" v-bind:max="6" v-bind:step="0.25" v-bind:value="0.5"/>
+
+          <h3><span style="color: lightsalmon; font-weight: 700;">M</span>ode de déplacement</h3>
           <div id="modes">
-            <div :class="mode "
+            <div :class="mode"
               v-for="mode in modes"
                 :key="mode.id"
                 v-on:click="selectMode($event, mode)">
               <img :src="require('./img/' + mode.image)" />
+              <div class="tooltip">{{mode.speed}} km/h</div>
             </div>
           </div>
+          <h3><span style="color: lightsalmon; font-weight: 700;">Clique</span> sur la carte pour définir le point de départ</h3>
         </div>
         <div class="cat">
           <h3>Détails de la balade</h3>
           <div id="details">
-            <div>{{km}}</div>
-            <div>{{h}}</div>
+            <div v-html='details'></div>
           </div>
         </div>
     </div>
@@ -24,8 +28,21 @@
 
 <script>
 
+import Slider from './Slider.vue'
+
+const hourStr = function(time) {
+  let hh = Math.floor(time)
+  let min = Math.floor((time - Math.floor(time)) * 60)
+  if(hh ==0) return min + "min"
+  if(min == 0) min = ''
+  return hh + 'h' + min
+}
+
 export default {
   name: 'Panel',
+  components: {
+    Slider
+  },
   data() {
     return {
       modes: [{
@@ -65,32 +82,55 @@ export default {
             mode: 'foot',
             selected: false
         }],
-      expectedTime: 0.5, // heures
       speed: 4.2,
       mode: 'foot',
-      details: ''
+      km: 0,
+      h: 0,
+      slider: null
+    }
+  },
+  mounted() {
+    this.slider = this.$refs.slider
+  },
+  computed: {
+    details: function() {
+      let km = Number(this.km).toFixed(1)
+      console.log(km)
+      return 'Distance : ' + km + ' km' 
+          + '<br/>Temps : ' + hourStr(this.h)
+    },
+    dispExpectedTime: function() {
+      if(this.slider !== null) {
+        let time = this.slider.currentValue
+        console.log('time ' + time)
+        return hourStr(time)
+      } else {
+        return ''
+      }
     }
   },
   methods: {
-      selectMode(e, mode) {
-          console.log("select mode " + mode.id)
-          for(var m in this.modes) {
-            let mod = this.modes[m]
-            if(mod === mode) {
-              mod.selected = true
-              this.speed = mod.speed
-              this.mode = mod.mode
-            } else {
-              mod.selected = false
-            }
-          }
+    selectMode(e, mode) {
+      console.log("select mode " + mode.id)
+      for(var m in this.modes) {
+        let mod = this.modes[m]
+        if(mod === mode) {
+          mod.selected = true
+          this.speed = mod.speed
+          this.mode = mod.mode
+        } else {
+          mod.selected = false
+        }
       }
+    },
+    getExpectedTime() {
+      return this.slider.currentValue
+    }
   }
 }
 
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
 #panel {
@@ -117,7 +157,7 @@ h3 {
   font-weight: 100;
   padding: 2px;
   margin: 4px;
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
 .cat {
@@ -125,6 +165,13 @@ h3 {
   border-radius: 10px;
   padding: 5px 0px 5px 0px;
   margin-bottom: 10px;
+}
+
+#slider {
+  position: relative;
+  left: 130px;
+  top: -28px;
+  width: 50%;
 }
 
 #modes {
@@ -146,11 +193,13 @@ h3 {
   background-color: lightsalmon;
   border: 5px solid transparent;
   border-radius: 10px;
-  
+  display: inline-block;
+  position: relative;
+  flex-direction: row;
 }
 
 .mode:hover {
-  background-color: orange
+  background-color: orange;
 }
 
 .selected {
@@ -168,8 +217,34 @@ h3 {
   border-radius: 10px;
 }
 
+.mode:hover .tooltip {
+  display:inline-block;
+  position: absolute;
+  background-color: #000000cc;
+  color: white;
+  opacity: 1;
+}
+
+.tooltip {
+  display: none;
+  opacity: 0;
+  text-align: center;
+  padding: 1px;
+  z-index: 10;
+  width: 50px;
+  left: 15px;
+  bottom: 0px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 #details {
-  padding-left: 6px;
+  padding-left: 16px;
+  font-size: 1.1em;
+  font-weight: 100;
 }
 
 </style>

@@ -83,7 +83,9 @@ export default {
       this.generateRide(lngLat)
     },
     generateSteps(from) {
-      const expectedDistance = this.panel.speed * this.panel.expectedTime
+      console.log("expectedTime=" + this.panel.getExpectedTime() + " h")
+      console.log("speed=" + this.panel.speed + " km/h")
+      const expectedDistance = this.panel.speed * this.panel.getExpectedTime()
       console.log("expectedDistance=" + expectedDistance + " km")
       
       // on considère un cercle dont le périmètre = expectedDistance
@@ -135,15 +137,13 @@ export default {
       
       const path = await this.getRoute(steps)
       console.log(path)
-
-      const km = path.distance
-      const h = path.time / 3600000
       
       const coords = this.decodeGeometry(path.points)
       this.lastPolylineLayerId = this.addPolyline(coords)
       console.log('added layer ' + this.lastPolylineLayerId)
 
-      this.panel.details = "Distance : " + km + " km<br/>Temps : " + h + " h"
+      this.panel.km = path.distance / 1000
+      this.panel.h = path.time / 3600000
     },
     async getRoute(points) {
       var pointsArg = ""
@@ -255,7 +255,6 @@ export default {
 
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
 @import '~maplibre-gl/dist/maplibre-gl.css';
