@@ -2,6 +2,10 @@
   "name": "ride-generator",
   "version": "0.1.0",
   "private": false,
+  "engines": {
+    "node": "14.x",
+    "npm": "8.1.x"
+  },
   "keywords": [
     "vue",
     "vue.js",
@@ -31,7 +35,7 @@
     "express": "^4.17.1",
     "maplibre-gl": "^1.15.2",
     "serve-static": "^1.14.1",
-    "vue": "^3.0.0"
+    "vue": "^3.2.24"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

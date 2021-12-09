@@ -13,6 +13,8 @@ import { Map, Marker, NavigationControl, GeolocateControl } from 'maplibre-gl';
 import * as turf from '@turf/turf'
 
 import Panel from './Panel.vue'
+import * as routing from './routing.js'
+import * as utils from './utils.js'
 
 const DEBUG = false
 
@@ -93,8 +95,8 @@ export default {
       console.log("expectedCircleRadius=" + expectedCircleRadius + " km")
 
       // on décentre aléatoirement ce cercle par rapport au point d'origine
-      var dlng = this.getRandomDegreeDelta(0.001),
-          dlat = this.getRandomDegreeDelta(0.001)
+      var dlng = utils.getRandomDegreeDelta(0.001),
+          dlat = utils.getRandomDegreeDelta(0.001)
       const expectedCircleCenter = {lng: from.lng + dlng, lat: from.lat + dlat} 
       if(DEBUG) {
         new Marker({
@@ -138,7 +140,7 @@ export default {
       const path = await this.getRoute(steps)
       console.log(path)
       
-      const coords = this.decodeGeometry(path.points)
+      const coords = routing.decodeGeometry(path.points)
       this.lastPolylineLayerId = this.addPolyline(coords)
       console.log('added layer ' + this.lastPolylineLayerId)
 
@@ -146,78 +148,10 @@ export default {
       this.panel.h = path.time / 3600000
     },
     async getRoute(points) {
-      var pointsArg = ""
-      points.forEach(function(point) {
-        if(pointsArg.length > 0) pointsArg += "&"
-        pointsArg += "point=" + point.lat + "%2C" + point.lng
-      })
-      const routingUrl = "https://graphhopper.com/api/1/route?"
-        + pointsArg
-        + "&vehicle=" + this.panel.mode
-        + "&avoid=motorway;ferry"
-        //+ "&details=street_name;time;distance;max_speed;toll;road_class;road_class_link;road_access;road_environment;lanes;surface"
-        + "&optimize=true" // meilleur ordre de passage
-        + "&elevation=false"
-        + "&instructions=false"
-        + "&turn_costs=false"
-        + "&locale=fr"
-        + "&calc_points=true"
-        + "&key=8981bcd5-eaab-459b-9aa0-af1eb64b35e4"
-
-      const response = await fetch(routingUrl)
-      const data = await response.json()
-
-      if(data.paths && data.paths.length > 0) {
-        return data.paths[0]
-      }
-    },
-    decodeGeometry(encoded, precision) {
-      precision = precision || 5
-      precision = Math.pow(10, -precision)
-      var len = encoded.length, index=0, lat=0, lng = 0, array = []
-      while (index < len) {
-        var b, shift = 0, result = 0
-        do {
-          b = encoded.charCodeAt(index++) - 63
-          result |= (b & 0x1f) << shift
-          shift += 5
-        } while (b >= 0x20)
-        var dlat = ((result & 1) ? ~(result >> 1) : (result >> 1))
-        lat += dlat
-        shift = 0
-        result = 0
-        do {
-          b = encoded.charCodeAt(index++) - 63
-          result |= (b & 0x1f) << shift
-          shift += 5
-        } while (b >= 0x20)
-        var dlng = ((result & 1) ? ~(result >> 1) : (result >> 1))
-        lng += dlng
-        array.push( [lng * precision, lat * precision] )
-      }
-      return array
-    },
-    getRandomDegreeDelta(max) {
-      return Math.random() * max * 2 - max
-    },
-    newUniqueId() {
-      return Math.random().toString(36).substr(2, 9)
-    },
-    distance(from, to) {
-        const earthRadiusKm = 6371;
-
-        const dLat = (to.lat - from.lat) * 180 / Math.PI
-        const dLon = (to.lng - from.lng) * 180 / Math.PI
-
-        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.sin(dLon / 2) * Math.sin(dLon / 2) * 
-                Math.cos(from.lat * 180 / Math.PI) * Math.cos(to.lat * 180 / Math.PI)
-
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-        return earthRadiusKm * c;
+      return await routing.route(points, this.panel.mode)
     },
     addGeojson(geojsonData, type, paint) {
-      const layerId = this.newUniqueId()
+      const layerId = utils.newUniqueId()
       this.map.addSource(layerId, {
         type: 'geojson',
         data: geojsonData
