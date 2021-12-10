@@ -9,6 +9,9 @@ export default {
   name: 'App',
   components: {
     Map
+  },
+  async created() {
+    await fetch('https://dept-quiz.herokuapp.com/stat?feature=ride-generator')
   }
 }
 </script>
