@@ -1,5 +1,5 @@
 <template>
-    <div id="panel">
+    <section id="panel">
         <h1>Générateur de <span style="color: lightsalmon;">balade</span></h1>
         <div class="cat">
           <h3><span style="color: lightsalmon; font-weight: 700;">D</span>urée : {{dispExpectedTime}}</h3>
@@ -23,7 +23,7 @@
             <div v-html='details'></div>
           </div>
         </div>
-    </div>
+    </section>
 </template>
 
 <script>
@@ -133,19 +133,6 @@ export default {
 
 <style scoped>
 
-#panel {
-  position: absolute;
-  background-color: #000012bb;
-  left: 0px;
-  top: 0px;
-  width: 300px;
-  height: 100%;
-  color: white;
-  text-align: left;
-  padding: 10px;
-  z-index: 1005;
-}
-
 h1 {
   font-size: 3em;
   padding: 0px;
@@ -163,8 +150,9 @@ h3 {
 .cat {
   background-color: #aaaaaa33;
   border-radius: 10px;
-  padding: 5px 0px 5px 0px;
+  padding: 5px;
   margin-bottom: 10px;
+  margin-right: 10px;
 }
 
 #slider {

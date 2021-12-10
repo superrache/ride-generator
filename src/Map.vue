@@ -217,4 +217,27 @@ a {
   z-index: 1;
 }
 
+#panel {
+  position: absolute;
+  background-color: #000012bb;
+  bottom: 0px;
+  width: 100%;
+  color: white;
+  text-align: left;
+  padding: 10px;
+  z-index: 1005;
+  height: auto;
+  max-height: 300px;
+  overflow-y: scroll;
+}
+
+@media only screen and (min-width: 768px) {
+  #panel {
+    left: 0px;
+    top: 0px;
+    width: 300px;
+    max-height: 100%;
+  }
+}
+
 </style>
