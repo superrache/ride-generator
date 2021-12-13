@@ -31,7 +31,15 @@ export default {
       lastPolylineLayerId: null,
       zoom: 14,
       center: { lat: 47.2143, lng: -1.5587 },
-      panel: null
+      panel: null,
+      spinner: {
+        id: 'spinner',
+        center: null,
+        radius: 0,
+        source: null,
+        i: 0,
+        timerId: 0
+      }
     }
   },
   mounted() {
@@ -69,10 +77,6 @@ export default {
     startAt(lngLat) {
       if(!DEBUG) {
         if(this.initMarker !== null) this.initMarker.remove()
-        if(this.lastPolylineLayerId !== null) {
-          console.log('removing layer ' + this.lastPolylineLayerId)
-          this.removePolyline(this.lastPolylineLayerId)
-        }
       }
 
       this.initMarker = new Marker({
@@ -111,6 +115,10 @@ export default {
       var circle = turf.circle([expectedCircleCenter.lng, expectedCircleCenter.lat], expectedCircleRadius, options)
       if(DEBUG) this.addGeojson(circle, 'fill', {'fill-color': '#088', 'fill-opacity': 0.1})
 
+      this.spinner.center = expectedCircleCenter
+      this.spinner.radius = 0.002
+      this.startSpinner()
+
       // on prend au hazard n points sur le cercle
       // les points doivent être éloignés et dans l'ordre
       const n = 3
@@ -143,8 +151,15 @@ export default {
       const path = await this.getRoute(steps)
       
       const coords = routing.decodeGeometry(path.points)
+
+      if(!DEBUG && this.lastPolylineLayerId !== null) {
+        console.log('removing layer ' + this.lastPolylineLayerId)
+        this.removePolyline(this.lastPolylineLayerId)
+      }
       this.lastPolylineLayerId = this.addPolyline(coords)
       console.log('added layer ' + this.lastPolylineLayerId)
+
+      this.stopSpinner()
 
       this.panel.km = path.distance / 1000
       this.panel.h = path.time / 3600000
@@ -185,6 +200,46 @@ export default {
     removePolyline(layerId) {
       if(this.map.getLayer(layerId))this.map.removeLayer(layerId)
       if(this.map.getSource(layerId)) this.map.removeSource(layerId)
+    },
+    startSpinner() {
+      if(this.spinner.timerId != 0) this.stopSpinner()
+      this.map.addSource(this.spinner.id, { 
+        type: 'geojson',
+        data: this.getSpinnerPoint(0)
+      })
+      this.map.addLayer({
+        id: this.spinner.id,
+        source: this.spinner.id,
+        type: 'circle',
+        paint: {
+          'circle-radius': 5,
+          'circle-color': '#ff5000'
+        }
+      })
+
+      this.spinner.source = this.map.getSource(this.spinner.id)
+      
+      this.spinner.i = 0
+      this.animateSpinner()
+    },
+    getSpinnerPoint(angle) {
+      return {
+        type: 'Point',
+        coordinates: [this.spinner.center.lng + Math.cos(-angle) * this.spinner.radius, this.spinner.center.lat + Math.sin(-angle) * this.spinner.radius]
+      }
+    },
+    animateSpinner() {
+      this.spinner.source.setData(this.getSpinnerPoint(this.spinner.i))
+      this.spinner.timerId = setTimeout(this.animateSpinner, 10)
+      this.spinner.i++
+      if(this.spinner.i > 360) this.spinner.i = 0
+    },
+    stopSpinner() {
+      clearTimeout(this.spinner.timerId)
+      this.spinner.timerId = 0
+      console.log(this.map.getLayer(this.spinner.id))
+      if(this.map.getLayer(this.spinner.id) !== undefined) this.map.removeLayer(this.spinner.id)
+      if(this.map.getSource(this.spinner.id) !== undefined) this.map.removeSource(this.spinner.id)
     }
   }
 }
