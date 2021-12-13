@@ -143,7 +143,6 @@ export default {
         steps.push(step)
       }
       steps.push(from)
-      
       return steps
     },
     async generateRide(from) {
