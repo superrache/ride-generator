@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3](https://github.com/superrache/ride-generator/compare/v0.1.2...v0.1.3) (2021-12-13)
+
+
+### Bug Fixes
+
+* husky conf ([fe4adeb](https://github.com/superrache/ride-generator/commit/fe4adebff0b81652e89f27611096a807a7ee65fc))
+
 ### [0.1.2](https://github.com/superrache/ride-generator/compare/v0.1.1...v0.1.2) (2021-12-13)
 
 
