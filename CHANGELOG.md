@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.2](https://github.com/superrache/ride-generator/compare/v0.1.1...v0.1.2) (2021-12-13)
+
+
+### Features
+
+* add loading ride spinner ([0f120c6](https://github.com/superrache/ride-generator/commit/0f120c6ca8907ce93a86e9c9f65124d948f1f147))
+
+
+### Bug Fixes
+
+* improve ride direction ([1385455](https://github.com/superrache/ride-generator/commit/13854557ac589d6ddfef02caf026d39feef099a9))
+
 ### 0.1.1 (2021-12-13)
 
 
