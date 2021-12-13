@@ -13,7 +13,7 @@ export async function route(points, mode) {
     + "&optimize=true" // meilleur ordre de passage
     + "&elevation=false"
     + "&instructions=false"
-    + "&turn_costs=false"
+    //+ "&turn_costs=false"
     + "&locale=fr"
     + "&calc_points=true"
     + "&key=8981bcd5-eaab-459b-9aa0-af1eb64b35e4"

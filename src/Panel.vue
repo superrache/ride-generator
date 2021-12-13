@@ -95,14 +95,12 @@ export default {
   computed: {
     details: function() {
       let km = Number(this.km).toFixed(1)
-      console.log(km)
       return 'Distance : ' + km + ' km' 
           + '<br/>Temps : ' + hourStr(this.h)
     },
     dispExpectedTime: function() {
       if(this.slider !== null) {
         let time = this.slider.currentValue
-        console.log('time ' + time)
         return hourStr(time)
       } else {
         return ''

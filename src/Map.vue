@@ -106,18 +106,21 @@ export default {
           .addTo(this.map)
       }
 
-      const numberOfCircleVertex = 30
-      var options = {steps: numberOfCircleVertex * 1.8, units: 'kilometers', properties: {}}
+      const numberOfCircleVertex = 30 // le nombre de vertex sélectionnables pour la balade sur le cercle
+      var options = {steps: numberOfCircleVertex, units: 'kilometers', properties: {}}
       var circle = turf.circle([expectedCircleCenter.lng, expectedCircleCenter.lat], expectedCircleRadius, options)
       if(DEBUG) this.addGeojson(circle, 'fill', {'fill-color': '#088', 'fill-opacity': 0.1})
 
       // on prend au hazard n points sur le cercle
       // les points doivent être éloignés et dans l'ordre
       const n = 3
-      var p = 0
+      var p = Math.round(Math.random() * numberOfCircleVertex)
+      console.log('p0=' + p)
       const steps = [from] // liste des étapes de la balade
       for(var s = 0; s < n; s++) {
-        p += numberOfCircleVertex / n //Math.round(Math.random() * numberOfCircleVertex / 3)
+        const dp = Math.round(Math.random() * numberOfCircleVertex / n)
+        console.log('dp=' + dp)
+        p += dp
         if(p > numberOfCircleVertex) p-= numberOfCircleVertex
         const step = {lng: circle.geometry.coordinates[0][p][0], lat: circle.geometry.coordinates[0][p][1]}
         
@@ -138,7 +141,6 @@ export default {
       const steps = this.generateSteps(from)
       
       const path = await this.getRoute(steps)
-      console.log(path)
       
       const coords = routing.decodeGeometry(path.points)
       this.lastPolylineLayerId = this.addPolyline(coords)
