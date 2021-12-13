@@ -11,7 +11,9 @@ export default {
     Map
   },
   async created() {
-    await fetch('https://dept-quiz.herokuapp.com/stat?feature=ride-generator')
+    if(window.location.origin.indexOf('herokuapp.com') > 0) {
+      await fetch('https://dept-quiz.herokuapp.com/stat?feature=ride-generator')
+    }
   }
 }
 </script>
