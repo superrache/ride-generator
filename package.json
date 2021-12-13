@@ -49,7 +49,7 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.0.0",
-    "husky": "^7.0.0",
+    "husky": "^7.0.4",
     "standard-version": "^9.3.2"
   },
   "eslintConfig": {
@@ -78,6 +78,7 @@
   },
   "husky": {
     "hooks": {
+      "pre-commit": "npm lint",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   }
