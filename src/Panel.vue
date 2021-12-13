@@ -30,11 +30,11 @@
 
 import Slider from './Slider.vue'
 
-const hourStr = function(time) {
-  let hh = Math.floor(time)
+const hourStr = function (time) {
+  const hh = Math.floor(time)
   let min = Math.floor((time - Math.floor(time)) * 60)
-  if(hh ==0) return min + "min"
-  if(min == 0) min = ''
+  if (hh === 0) return min + 'min'
+  if (min === 0) min = ''
   return hh + 'h' + min
 }
 
@@ -43,45 +43,45 @@ export default {
   components: {
     Slider
   },
-  data() {
+  data () {
     return {
       modes: [{
-            id: 'grandma_dog',
-            image: 'grandma_dog.jpg',
-            speed: 1, // km/h
-            mode: 'foot',
-            selected: false
-        }, {
-            id: 'dujardin_peignoir',
-            image: 'dujardin_peignoir.jpg',
-            speed: 2,
-            mode: 'foot',
-            selected: false
-        }, {
-            id: 'poussette',
-            image: 'poussette.jpg',
-            speed: 3,
-            mode: 'foot',
-            selected: false
-        },{
-            id: 'marche-urbaine',
-            image: 'marche-urbaine.jpg',
-            speed: 4.2,
-            mode: 'foot',
-            selected: true
-        },{
-            id: 'marche-nordique',
-            image: 'marche-nordique.jpg',
-            speed: 7,
-            mode: 'foot',
-            selected: false
-        },{
-            id: 'running_dog',
-            image: 'running_dog.png',
-            speed: 10,
-            mode: 'foot',
-            selected: false
-        }],
+        id: 'grandma_dog',
+        image: 'grandma_dog.jpg',
+        speed: 1, // km/h
+        mode: 'foot',
+        selected: false
+      }, {
+        id: 'dujardin_peignoir',
+        image: 'dujardin_peignoir.jpg',
+        speed: 2,
+        mode: 'foot',
+        selected: false
+      }, {
+        id: 'poussette',
+        image: 'poussette.jpg',
+        speed: 3,
+        mode: 'foot',
+        selected: false
+      }, {
+        id: 'marche-urbaine',
+        image: 'marche-urbaine.jpg',
+        speed: 4.2,
+        mode: 'foot',
+        selected: true
+      }, {
+        id: 'marche-nordique',
+        image: 'marche-nordique.jpg',
+        speed: 7,
+        mode: 'foot',
+        selected: false
+      }, {
+        id: 'running_dog',
+        image: 'running_dog.png',
+        speed: 10,
+        mode: 'foot',
+        selected: false
+      }],
       speed: 4.2,
       mode: 'foot',
       km: 0,
@@ -89,18 +89,18 @@ export default {
       slider: null
     }
   },
-  mounted() {
+  mounted () {
     this.slider = this.$refs.slider
   },
   computed: {
-    details: function() {
-      let km = Number(this.km).toFixed(1)
-      return 'Distance : ' + km + ' km' 
-          + '<br/>Temps : ' + hourStr(this.h)
+    details: function () {
+      const km = Number(this.km).toFixed(1)
+      return 'Distance : ' + km + ' km' +
+          '<br/>Temps : ' + hourStr(this.h)
     },
-    dispExpectedTime: function() {
-      if(this.slider !== null) {
-        let time = this.slider.currentValue
+    dispExpectedTime: function () {
+      if (this.slider !== null) {
+        const time = this.slider.currentValue
         return hourStr(time)
       } else {
         return ''
@@ -108,11 +108,11 @@ export default {
     }
   },
   methods: {
-    selectMode(e, mode) {
-      console.log("select mode " + mode.id)
-      for(var m in this.modes) {
-        let mod = this.modes[m]
-        if(mod === mode) {
+    selectMode (e, mode) {
+      console.log('select mode ' + mode.id)
+      for (var m in this.modes) {
+        const mod = this.modes[m]
+        if (mod === mode) {
           mod.selected = true
           this.speed = mod.speed
           this.mode = mod.mode
@@ -121,7 +121,7 @@ export default {
         }
       }
     },
-    getExpectedTime() {
+    getExpectedTime () {
       return this.slider.currentValue
     }
   }

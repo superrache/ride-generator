@@ -16,6 +16,7 @@
     "core-js": "^3.6.5",
     "express": "^4.17.1",
     "maplibre-gl": "^1.15.2",
+    "path": "^0.12.7",
     "serve-static": "^1.14.1",
     "vue": "^3.2.24"
   },
@@ -23,11 +24,16 @@
     "@commitlint/cli": "^15.0.0",
     "@commitlint/config-conventional": "^15.0.0",
     "@vue/cli-plugin-babel": "^4.5.15",
-    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-eslint": "^4.5.15",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
+    "@vue/eslint-config-standard": "^5.1.2",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^7.0.0",
     "husky": "^7.0.4",
     "standard-version": "^9.3.2"
@@ -39,7 +45,8 @@
     },
     "extends": [
       "plugin:vue/vue3-essential",
-      "eslint:recommended"
+      "eslint:recommended",
+      "@vue/standard"
     ],
     "parserOptions": {
       "parser": "babel-eslint"

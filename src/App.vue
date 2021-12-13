@@ -10,8 +10,8 @@ export default {
   components: {
     Map
   },
-  async created() {
-    if(window.location.origin.indexOf('herokuapp.com') > 0) {
+  async created () {
+    if (window.location.origin.indexOf('herokuapp.com') > 0) {
       await fetch('https://dept-quiz.herokuapp.com/stat?feature=ride-generator')
     }
   }

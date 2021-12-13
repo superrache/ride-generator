@@ -9,7 +9,7 @@
 
 <script>
 
-import { Map, Marker, NavigationControl, GeolocateControl } from 'maplibre-gl';
+import { Map, Marker, NavigationControl, GeolocateControl } from 'maplibre-gl'
 import * as turf from '@turf/turf'
 
 import Panel from './Panel.vue'
@@ -23,7 +23,7 @@ export default {
   components: {
     Panel
   },
-  data() {
+  data () {
     return {
       map: null,
       initMarker: null,
@@ -42,23 +42,23 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.panel = this.$refs.panel
 
     this.map = new Map({
-        container: this.$refs.map,
-        style: "https://api.jawg.io/styles/3425c3c4-29a2-494c-a977-e9232dd8cf26.json?access-token=UG9wQV1RcEgsXwkTX9M9qfBUV0ZckAfUhlqa3W4hK16gVbTFDUSMXrn60H1hEE6d",
-        center: [this.center.lng, this.center.lat],
-        zoom: this.zoom
-      })
-    
+      container: this.$refs.map,
+      style: 'https://api.jawg.io/styles/3425c3c4-29a2-494c-a977-e9232dd8cf26.json?access-token=UG9wQV1RcEgsXwkTX9M9qfBUV0ZckAfUhlqa3W4hK16gVbTFDUSMXrn60H1hEE6d',
+      center: [this.center.lng, this.center.lat],
+      zoom: this.zoom
+    })
+
     this.map.addControl(new NavigationControl(), 'top-right')
 
     this.map.addControl(
       new GeolocateControl({
         positionOptions: {
-        enableHighAccuracy: true
-      },
+          enableHighAccuracy: true
+        },
         trackUserLocation: true
       })
     )
@@ -66,21 +66,21 @@ export default {
     this.map.on('click', this.onClic)
   },
   methods: {
-    onClic(e) {
-        console.log('onClic')
-        this.startAt(e.lngLat)        
+    onClic (e) {
+      console.log('onClic')
+      this.startAt(e.lngLat)
     },
-    onDrag(e) {
+    onDrag (e) {
       console.log('onDrag')
       this.startAt(e.target._lngLat)
     },
-    startAt(lngLat) {
-      if(!DEBUG) {
-        if(this.initMarker !== null) this.initMarker.remove()
+    startAt (lngLat) {
+      if (!DEBUG) {
+        if (this.initMarker !== null) this.initMarker.remove()
       }
 
       this.initMarker = new Marker({
-        color: "#ff5000",
+        color: '#ff5000',
         draggable: true
       }).setLngLat(lngLat)
         .on('dragend', this.onDrag)
@@ -88,32 +88,32 @@ export default {
 
       this.generateRide(lngLat)
     },
-    generateSteps(from) {
-      console.log("expectedTime=" + this.panel.getExpectedTime() + " h")
-      console.log("speed=" + this.panel.speed + " km/h")
+    generateSteps (from) {
+      console.log('expectedTime=' + this.panel.getExpectedTime() + ' h')
+      console.log('speed=' + this.panel.speed + ' km/h')
       const expectedDistance = this.panel.speed * this.panel.getExpectedTime()
-      console.log("expectedDistance=" + expectedDistance + " km")
-      
+      console.log('expectedDistance=' + expectedDistance + ' km')
+
       // on considère un cercle dont le périmètre = expectedDistance
       const expectedCircleRadius = expectedDistance / (2 * Math.PI)
-      console.log("expectedCircleRadius=" + expectedCircleRadius + " km")
+      console.log('expectedCircleRadius=' + expectedCircleRadius + ' km')
 
       // on décentre aléatoirement ce cercle par rapport au point d'origine
-      var dlng = utils.getRandomDegreeDelta(0.001),
-          dlat = utils.getRandomDegreeDelta(0.001)
-      const expectedCircleCenter = {lng: from.lng + dlng, lat: from.lat + dlat} 
-      if(DEBUG) {
+      var dlng = utils.getRandomDegreeDelta(0.001)
+      var dlat = utils.getRandomDegreeDelta(0.001)
+      const expectedCircleCenter = { lng: from.lng + dlng, lat: from.lat + dlat }
+      if (DEBUG) {
         new Marker({
-          color: "#ff0000",
+          color: '#ff0000',
           draggable: false
-          }).setLngLat(expectedCircleCenter)
+        }).setLngLat(expectedCircleCenter)
           .addTo(this.map)
       }
 
       const numberOfCircleVertex = 30 // le nombre de vertex sélectionnables pour la balade sur le cercle
-      var options = {steps: numberOfCircleVertex, units: 'kilometers', properties: {}}
+      var options = { steps: numberOfCircleVertex, units: 'kilometers', properties: {} }
       var circle = turf.circle([expectedCircleCenter.lng, expectedCircleCenter.lat], expectedCircleRadius, options)
-      if(DEBUG) this.addGeojson(circle, 'fill', {'fill-color': '#088', 'fill-opacity': 0.1})
+      if (DEBUG) this.addGeojson(circle, 'fill', { 'fill-color': '#088', 'fill-opacity': 0.1 })
 
       this.spinner.center = expectedCircleCenter
       this.spinner.radius = 0.002
@@ -125,16 +125,16 @@ export default {
       var p = Math.round(Math.random() * numberOfCircleVertex)
       console.log('p0=' + p)
       const steps = [from] // liste des étapes de la balade
-      for(var s = 0; s < n; s++) {
+      for (var s = 0; s < n; s++) {
         const dp = Math.round(Math.random() * numberOfCircleVertex / n)
         console.log('dp=' + dp)
         p += dp
-        if(p > numberOfCircleVertex) p-= numberOfCircleVertex
-        const step = {lng: circle.geometry.coordinates[0][p][0], lat: circle.geometry.coordinates[0][p][1]}
-        
-        if(DEBUG) {
+        if (p > numberOfCircleVertex) p -= numberOfCircleVertex
+        const step = { lng: circle.geometry.coordinates[0][p][0], lat: circle.geometry.coordinates[0][p][1] }
+
+        if (DEBUG) {
           this.stepMarkers.push(new Marker({
-            color: "#088",
+            color: '#088',
             draggable: true
           }).setLngLat(step)
             .addTo(this.map))
@@ -145,14 +145,14 @@ export default {
       steps.push(from)
       return steps
     },
-    async generateRide(from) {
+    async generateRide (from) {
       const steps = this.generateSteps(from)
-      
+
       const path = await this.getRoute(steps)
-      
+
       const coords = routing.decodeGeometry(path.points)
 
-      if(!DEBUG && this.lastPolylineLayerId !== null) {
+      if (!DEBUG && this.lastPolylineLayerId !== null) {
         console.log('removing layer ' + this.lastPolylineLayerId)
         this.removePolyline(this.lastPolylineLayerId)
       }
@@ -164,10 +164,10 @@ export default {
       this.panel.km = path.distance / 1000
       this.panel.h = path.time / 3600000
     },
-    async getRoute(points) {
+    async getRoute (points) {
       return await routing.route(points, this.panel.mode)
     },
-    addGeojson(geojsonData, type, paint) {
+    addGeojson (geojsonData, type, paint) {
       const layerId = utils.newUniqueId()
       this.map.addSource(layerId, {
         type: 'geojson',
@@ -182,7 +182,7 @@ export default {
       })
       return layerId
     },
-    addPolyline(coords) {
+    addPolyline (coords) {
       const geojsonData = {
         type: 'Feature',
         geometry: {
@@ -191,19 +191,19 @@ export default {
         }
       }
       const paint = {
-          'line-color': '#ff5000',
-          'line-opacity': 0.50,
-          'line-width': 3
-        }
+        'line-color': '#ff5000',
+        'line-opacity': 0.50,
+        'line-width': 3
+      }
       return this.addGeojson(geojsonData, 'line', paint)
     },
-    removePolyline(layerId) {
-      if(this.map.getLayer(layerId))this.map.removeLayer(layerId)
-      if(this.map.getSource(layerId)) this.map.removeSource(layerId)
+    removePolyline (layerId) {
+      if (this.map.getLayer(layerId)) this.map.removeLayer(layerId)
+      if (this.map.getSource(layerId)) this.map.removeSource(layerId)
     },
-    startSpinner() {
-      if(this.spinner.timerId != 0) this.stopSpinner()
-      this.map.addSource(this.spinner.id, { 
+    startSpinner () {
+      if (this.spinner.timerId !== 0) this.stopSpinner()
+      this.map.addSource(this.spinner.id, {
         type: 'geojson',
         data: this.getSpinnerPoint(0)
       })
@@ -218,28 +218,28 @@ export default {
       })
 
       this.spinner.source = this.map.getSource(this.spinner.id)
-      
+
       this.spinner.i = 0
       this.animateSpinner()
     },
-    getSpinnerPoint(angle) {
+    getSpinnerPoint (angle) {
       return {
         type: 'Point',
         coordinates: [this.spinner.center.lng + Math.cos(-angle) * this.spinner.radius, this.spinner.center.lat + Math.sin(-angle) * this.spinner.radius]
       }
     },
-    animateSpinner() {
+    animateSpinner () {
       this.spinner.source.setData(this.getSpinnerPoint(this.spinner.i))
       this.spinner.timerId = setTimeout(this.animateSpinner, 10)
       this.spinner.i++
-      if(this.spinner.i > 360) this.spinner.i = 0
+      if (this.spinner.i > 360) this.spinner.i = 0
     },
-    stopSpinner() {
+    stopSpinner () {
       clearTimeout(this.spinner.timerId)
       this.spinner.timerId = 0
       console.log(this.map.getLayer(this.spinner.id))
-      if(this.map.getLayer(this.spinner.id) !== undefined) this.map.removeLayer(this.spinner.id)
-      if(this.map.getSource(this.spinner.id) !== undefined) this.map.removeSource(this.spinner.id)
+      if (this.map.getLayer(this.spinner.id) !== undefined) this.map.removeLayer(this.spinner.id)
+      if (this.map.getSource(this.spinner.id) !== undefined) this.map.removeSource(this.spinner.id)
     }
   }
 }
