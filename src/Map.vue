@@ -149,20 +149,21 @@ export default {
       const steps = this.generateSteps(from)
 
       const path = await this.getRoute(steps)
+      if(path !== null) {
+        const coords = routing.decodeGeometry(path.geometry)
 
-      const coords = routing.decodeGeometry(path.points)
+        if (!DEBUG && this.lastPolylineLayerId !== null) {
+          console.log('removing layer ' + this.lastPolylineLayerId)
+          this.removePolyline(this.lastPolylineLayerId)
+        }
+        this.lastPolylineLayerId = this.addPolyline(coords)
+        console.log('added layer ' + this.lastPolylineLayerId)
 
-      if (!DEBUG && this.lastPolylineLayerId !== null) {
-        console.log('removing layer ' + this.lastPolylineLayerId)
-        this.removePolyline(this.lastPolylineLayerId)
+        this.stopSpinner()
+
+        this.panel.km = path.distance / 1000
+        this.panel.h = path.time / 3600000
       }
-      this.lastPolylineLayerId = this.addPolyline(coords)
-      console.log('added layer ' + this.lastPolylineLayerId)
-
-      this.stopSpinner()
-
-      this.panel.km = path.distance / 1000
-      this.panel.h = path.time / 3600000
     },
     async getRoute (points) {
       return await routing.route(points, this.panel.mode)
@@ -237,7 +238,6 @@ export default {
     stopSpinner () {
       clearTimeout(this.spinner.timerId)
       this.spinner.timerId = 0
-      console.log(this.map.getLayer(this.spinner.id))
       if (this.map.getLayer(this.spinner.id) !== undefined) this.map.removeLayer(this.spinner.id)
       if (this.map.getSource(this.spinner.id) !== undefined) this.map.removeSource(this.spinner.id)
     }

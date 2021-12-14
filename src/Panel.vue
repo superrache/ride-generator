@@ -49,41 +49,41 @@ export default {
         id: 'grandma_dog',
         image: 'grandma_dog.jpg',
         speed: 1, // km/h
-        mode: 'foot',
+        mode: 'foot-walking',
         selected: false
       }, {
         id: 'dujardin_peignoir',
         image: 'dujardin_peignoir.jpg',
         speed: 2,
-        mode: 'foot',
+        mode: 'foot-walking',
         selected: false
       }, {
         id: 'poussette',
         image: 'poussette.jpg',
         speed: 3,
-        mode: 'foot',
+        mode: 'wheelchair',
         selected: false
       }, {
         id: 'marche-urbaine',
         image: 'marche-urbaine.jpg',
         speed: 4.2,
-        mode: 'foot',
+        mode: 'foot-walking',
         selected: true
       }, {
         id: 'marche-nordique',
         image: 'marche-nordique.jpg',
         speed: 7,
-        mode: 'foot',
+        mode: 'foot-hiking',
         selected: false
       }, {
         id: 'running_dog',
         image: 'running_dog.png',
         speed: 10,
-        mode: 'foot',
+        mode: 'foot-hiking',
         selected: false
       }],
       speed: 4.2,
-      mode: 'foot',
+      mode: 'foot-walking',
       km: 0,
       h: 0,
       slider: null

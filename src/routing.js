@@ -1,28 +1,23 @@
+var openrouteservice = require('openrouteservice-js')
+var Directions = new openrouteservice.Directions({ api_key: '5b3ce3597851110001cf6248deda538e760e496ebf9fa229cbb09ec3' })
+
 export async function route (points, mode) {
-  var pointsArg = ''
+  var coordinates = []
   points.forEach(function (point) {
-    if (pointsArg.length > 0) pointsArg += '&'
-    pointsArg += 'point=' + point.lat + '%2C' + point.lng
+    coordinates.push([point.lng, point.lat])
   })
 
-  const routingUrl = 'https://graphhopper.com/api/1/route?' +
-    pointsArg +
-    '&vehicle=' + mode +
-    '&avoid=motorway;ferry' +
-    // + "&details=street_name;time;distance;max_speed;toll;road_class;road_class_link;road_access;road_environment;lanes;surface"
-    '&optimize=true' + // meilleur ordre de passage
-    '&elevation=false' +
-    '&instructions=false' +
-    // + "&turn_costs=false"
-    '&locale=fr' +
-    '&calc_points=true' +
-    '&key=8981bcd5-eaab-459b-9aa0-af1eb64b35e4'
+  const calculation = await Directions.calculate({
+    coordinates: coordinates,
+    profile: mode,
+    //avoidables: ['highways', 'tollways', 'ferries', 'fords'],
+    format: 'json'
+  })
 
-  const response = await fetch(routingUrl)
-  const data = await response.json()
-
-  if (data.paths && data.paths.length > 0) {
-    return data.paths[0]
+  if(calculation.routes && calculation.routes.length > 0) {
+    return calculation.routes[0]
+  } else {
+    return null
   }
 }
 
