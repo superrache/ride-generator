@@ -148,9 +148,9 @@ export default {
     async generateRide (from) {
       const steps = this.generateSteps(from)
 
-      const path = await this.getRoute(steps)
-      if(path !== null) {
-        const coords = routing.decodeGeometry(path.geometry)
+      const route = await this.getRoute(steps)
+      if(route !== null) {
+        const coords = routing.decodeGeometry(route.geometry)
 
         if (!DEBUG && this.lastPolylineLayerId !== null) {
           console.log('removing layer ' + this.lastPolylineLayerId)
@@ -161,8 +161,7 @@ export default {
 
         this.stopSpinner()
 
-        this.panel.km = path.distance / 1000
-        this.panel.h = path.time / 3600000
+        this.panel.km = route.summary.distance / 1000
       }
     },
     async getRoute (points) {

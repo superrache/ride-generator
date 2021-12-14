@@ -85,7 +85,6 @@ export default {
       speed: 4.2,
       mode: 'foot-walking',
       km: 0,
-      h: 0,
       slider: null
     }
   },
@@ -96,7 +95,7 @@ export default {
     details: function () {
       const km = Number(this.km).toFixed(1)
       return 'Distance : ' + km + ' km' +
-          '<br/>Temps : ' + hourStr(this.h)
+          '<br/>Temps : ' + hourStr(this.km / this.speed)
     },
     dispExpectedTime: function () {
       if (this.slider !== null) {
