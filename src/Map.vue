@@ -284,7 +284,7 @@ a {
   z-index: 1005;
   height: auto;
   max-height: 300px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 @media only screen and (min-width: 768px) {
