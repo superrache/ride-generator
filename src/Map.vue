@@ -1,9 +1,9 @@
 <template>
-    <div class="container">
+    <div id="map_container">
       <div id="map" ref="map">
       </div>
 
-      <Panel id="panel" ref="panel"/>
+      <Panel id="panel" ref="panel" />
     </div>
 </template>
 
@@ -249,7 +249,7 @@ export default {
 
 @import '~maplibre-gl/dist/maplibre-gl.css';
 
-.container {
+#map_container {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -267,33 +267,9 @@ a {
 }
 
 #map {
-  margin-left: 0px;
   width: 100%;
   height: 100%;
   z-index: 1;
-}
-
-#panel {
-  position: absolute;
-  background-color: #000012bb;
-  bottom: 0px;
-  width: 100%;
-  color: white;
-  text-align: left;
-  padding: 10px;
-  z-index: 1005;
-  height: auto;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-@media only screen and (min-width: 768px) {
-  #panel {
-    left: 0px;
-    top: 0px;
-    width: 300px;
-    max-height: 100%;
-  }
 }
 
 </style>

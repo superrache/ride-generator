@@ -1,28 +1,35 @@
 <template>
-    <section id="panel">
-        <h1>Générateur de <span style="color: lightsalmon;">balade</span></h1>
-        <div class="cat">
-          <h3><span style="color: lightsalmon; font-weight: 700;">D</span>urée : {{dispExpectedTime}}</h3>
-          <Slider id="slider" ref="slider" v-bind:min="0.25" v-bind:max="6" v-bind:step="0.25" v-bind:value="0.5"/>
+    <section id="panel"
+        v-on:scroll.prevent="handleScroll"
+        :style="{ 'max-height': computedPanelMaxHeight }"
+      >
+      <div id="handle"></div>
 
-          <h3><span style="color: lightsalmon; font-weight: 700;">M</span>ode de déplacement</h3>
-          <div id="modes">
-            <div :class="mode"
-              v-for="mode in modes"
-                :key="mode.id"
-                v-on:click="selectMode($event, mode)">
-              <img :src="require('./img/' + mode.image)" />
-              <div class="tooltip">{{mode.speed}} km/h</div>
-            </div>
-          </div>
-          <h3><span style="color: lightsalmon; font-weight: 700;">Clique</span> sur la carte pour définir le point de départ</h3>
-        </div>
-        <div class="cat">
-          <h3>Détails de la balade</h3>
-          <div id="details">
-            <div v-html='details'></div>
+      <h1>Générateur de <span style="color: lightsalmon;">balade</span></h1>
+      
+      <div class="cat">
+        <h3><span style="color: lightsalmon; font-weight: 700;">D</span>urée : {{dispExpectedTime}}</h3>
+        <Slider id="slider" ref="slider" v-bind:min="0.25" v-bind:max="6" v-bind:step="0.25" v-bind:value="0.5"/>
+
+        <h3><span style="color: lightsalmon; font-weight: 700;">M</span>ode de déplacement</h3>
+        <div id="modes">
+          <div :class="mode"
+            v-for="mode in modes"
+              :key="mode.id"
+              v-on:click="selectMode($event, mode)">
+            <img :src="require('./img/' + mode.image)" />
+            <div class="tooltip">{{mode.speed}} km/h</div>
           </div>
         </div>
+        <h3><span style="color: lightsalmon; font-weight: 700;">Clique</span> sur la carte pour définir le point de départ</h3>
+      </div>
+
+      <div class="cat">
+        <h3>Détails de la balade</h3>
+        <div id="details">
+          <div v-html='details'></div>
+        </div>
+      </div>
     </section>
 </template>
 
@@ -85,7 +92,9 @@ export default {
       speed: 4.2,
       mode: 'foot-walking',
       km: 0,
-      slider: null
+      slider: null,
+      scrollPosition: 0,
+      panelMaxHeight: 300
     }
   },
   mounted () {
@@ -104,6 +113,9 @@ export default {
       } else {
         return ''
       }
+    },
+    computedPanelMaxHeight() {
+      return this.panelMaxHeight + 'px'
     }
   },
   methods: {
@@ -122,6 +134,14 @@ export default {
     },
     getExpectedTime () {
       return this.slider.currentValue
+    },
+    handleScroll(e) {
+      var currentScrollPosition = e.srcElement.scrollTop
+      console.log(e.srcElement)
+      var diff = currentScrollPosition - this.scrollPosition
+      this.panelMaxHeight += diff
+      //e.srcElement.scrollTop = 0
+      this.scrollPosition = currentScrollPosition
     }
   }
 }
@@ -129,6 +149,44 @@ export default {
 </script>
 
 <style scoped>
+
+#panel {
+  z-index: 1005;
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  height: auto;
+  background-color: #000012bb;
+  text-align: center;
+  padding: 5px;
+  box-shadow: 0px -1px 6px 0px rgba(0,0,0,0.75);
+  overflow-y: auto;
+}
+
+#handle {
+  position: relative;
+  margin: auto;
+  margin-bottom: 10px;
+  width: 60px;
+  height: 5px;
+  background-color: #888;
+  border-radius: 10px;
+  cursor: move;
+  visibility: visible;
+}
+
+@media only screen and (min-width: 641px) {
+  #panel {
+    left: 0px;
+    top: 0px;
+    width: 300px;
+    max-height: 100vh;
+  }
+
+  #handle {
+    visibility: hidden;
+  }
+}
 
 h1 {
   font-size: 3em;
@@ -148,15 +206,15 @@ h3 {
   background-color: #aaaaaa33;
   border-radius: 10px;
   padding: 5px;
-  margin-bottom: 10px;
-  margin-right: 10px;
+  margin: 5px 5px 10px 5px;
 }
 
 #slider {
   position: relative;
-  left: 130px;
-  top: -28px;
+  top: 0px;
   width: 50%;
+  margin: auto;
+  margin-bottom: 15px;
 }
 
 #modes {
@@ -166,7 +224,7 @@ h3 {
   width: 100%;
   margin: 0px auto;
   position: relative;
-  text-align:center;
+  text-align: center;
 }
 
 .mode {
