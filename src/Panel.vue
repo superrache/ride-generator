@@ -94,8 +94,15 @@ export default {
       km: 0,
       slider: null,
       scrollPosition: 0,
-      panelMaxHeight: 300
+      windowWidth: 0,
+      mobilePanelMaxHeight: 300
     }
+  },
+  created() {
+    var self = this
+    window.addEventListener('resize', function() {
+      self.windowWidth = window.innerWidth
+    })
   },
   mounted () {
     this.slider = this.$refs.slider
@@ -115,11 +122,17 @@ export default {
       }
     },
     computedPanelMaxHeight() {
-      return this.panelMaxHeight + 'px'
+      var value = ''
+      if(this.windowWidth < 641)
+        value = this.mobilePanelMaxHeight + 'px'
+      else
+        value = '100vh'
+      console.log('computedPanelMaxHeight=' + value)
+      return value
     }
   },
   methods: {
-    selectMode (e, mode) {
+    selectMode(e, mode) {
       console.log('select mode ' + mode.id)
       for (var m in this.modes) {
         const mod = this.modes[m]
@@ -137,9 +150,9 @@ export default {
     },
     handleScroll(e) {
       var currentScrollPosition = e.srcElement.scrollTop
-      console.log(e.srcElement)
+      //console.log(e.srcElement)
       var diff = currentScrollPosition - this.scrollPosition
-      this.panelMaxHeight += diff
+      this.mobilePanelMaxHeight += diff
       //e.srcElement.scrollTop = 0
       this.scrollPosition = currentScrollPosition
     }
@@ -180,7 +193,6 @@ export default {
     left: 0px;
     top: 0px;
     width: 300px;
-    max-height: 100vh;
   }
 
   #handle {
